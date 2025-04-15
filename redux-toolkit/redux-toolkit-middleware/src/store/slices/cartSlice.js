@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSelector, createSlice } from '@reduxjs/toolkit'
 
 const findItemIndex = (state, action) =>
   state.list.findIndex((cartItem) => cartItem.productId === action.payload.productId)
@@ -51,6 +51,25 @@ const slice = createSlice({
     
   },
 })
+
+// selectors
+export const getCartItems = ({ products, cartItems }) => {
+  return cartItems.list
+    .map(({ productId, quantity }) => {
+      const cartProduct = products.list.find(
+        (product) => product.id === productId
+      )
+      return { ...cartProduct, quantity }
+    })
+    .filter(({ title }) => title)
+}
+
+// you can memoize the selector using createSelector
+export const getAllCartItems =  createSelector(getCartItems, (state) => state);
+
+export const getCartLoadingState = (state) => state.cartItems.loading;
+export const getCartError = (state) => state.cartItems.error;
+
 export const {
   fetchCartItems,
   fetchCartItemsError,
