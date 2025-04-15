@@ -1,10 +1,37 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import CartIcon from '../../assets/cart-icon.svg'
-import { useSelector } from 'react-redux'
+import React, { useEffect } from "react";
+import { Link } from "react-router-dom";
+import CartIcon from "../../assets/cart-icon.svg";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProducts, fetchProductsError, updateAllProducts } from "../store/slices/productSlice";
+import { fetchCartItems, fetchCartItemsError, loadCartItems } from "../store/slices/cartSlice";
 
 export default function Header() {
-  const cartItems = useSelector((state) => state.cartItems)
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchProducts());
+    fetch("https://fakestoreapi.com/products")
+      .then((res) => res.json())
+      .then((data) => {
+        dispatch(updateAllProducts(data));
+      })
+      .catch(() => {
+        dispatch(fetchProductsError());
+      });
+
+    dispatch(fetchCartItems());
+    fetch("https://fakestoreapi.com/carts/5")
+      .then((res) => res.json())
+      .then((data) => {
+        dispatch(loadCartItems(data));
+      })
+      .catch(() => {
+        dispatch(fetchCartItemsError());
+      });
+  }, []);
+
+  const cartItems = useSelector((state) => state.cartItems.list)
   // console.log(cartItems)
   return (
     <header>
@@ -23,5 +50,5 @@ export default function Header() {
         </Link>
       </div>
     </header>
-  )
+  );
 }
