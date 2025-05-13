@@ -10,6 +10,8 @@ export default function Header() {
   const dispatch = useDispatch();
 
   useEffect(() => {
+
+    // ~ ~ ~ ~ ~ ~ ~ ~ ~ ~  making api call in redux ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
     dispatch(fetchProducts());
     fetch("https://fakestoreapi.com/products")
       .then((res) => res.json())
@@ -29,6 +31,8 @@ export default function Header() {
       .catch(() => {
         dispatch(fetchCartItemsError());
       });
+
+
   }, []);
 
   const cartItems = useSelector((state) => state.cartItems.list)
